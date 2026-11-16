@@ -1,4 +1,4 @@
-# Signal Watch (uptime monitor) — Product truth
+# Uptime (dashboard) — Product truth
 
 > Inferred from the code and copy (no user interview). Checked against the portfolio card claims review
 > (`portfolio-site-web/docs/audits/CARD-CLAIMS-REVIEW-2026-10.md`, row `uptime-monitor`) on 2026-10-23.
