@@ -26,8 +26,10 @@ A portfolio visitor who wants to see how a calm uptime readout could look.
 
 ## Live URL and deploy state
 
-- Live: https://uptime-monitor.bookchaowalit.com (HTTP 200 on 2026-10-23).
-- The Vercel project `bookchaowalit-uptime-monitor-frontend` was last deployed to production on 2026-08-24 (CLI, commit b92a59e, before the Next 16.4.2 CVE patch). The CVE patch deploy is queued with the coordinator (Vercel free-plan deploy limit hit on 2026-10-23). Its Git link names the old repository `bookchaowalit/bookchaowalit-uptime-monitor-frontend`, so a push to `main` does not deploy: the L2 work stays undeployed until the owner reconnects Vercel Git to this repository (owner action D9). `NEXT_PUBLIC_SENTRY_DSN` is already set on the Vercel project (Sentry project `devtools-uptime-monitor-web`, org `personal-yu0`).
+- Live: https://uptime-monitor.bookchaowalit.com (HTTP 200 on 2026-11-16, Dashboard shell).
+- Vercel Git deploy is connected to `bookchaowalit-website/devtools-uptime-monitor-web` (owner action D9 is done): a push to `main`
+  deploys. Last production deploy: 2026-11-16, Git, commit 0fb712d (Dashboard shell move), Vercel status success.
+- `NEXT_PUBLIC_SENTRY_DSN` is set on the Vercel project (Sentry project `devtools-uptime-monitor-web`, org `personal-yu0`).
 
 ## Boundaries
 
