@@ -3,6 +3,8 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import Home from "@/app/page";
+import { EndpointList } from "@/components/endpoint-list";
+import { ENDPOINTS } from "@/lib/uptime";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -47,5 +49,19 @@ describe("uptime page", () => {
   it("says up and down in words next to the colour", () => {
     expect([...host.querySelectorAll(".ds-row .ds-pill")].map((pill) => [pill.textContent, pill.getAttribute("data-tone")])).toEqual([["Up", "green"], ["Down", "red"]]);
     expect(host.querySelector(".ds-skip")?.getAttribute("href")).toBe("#main");
+  });
+});
+
+describe("endpoint list", () => {
+  it("says there are no endpoints instead of showing an empty list", () => {
+    act(() => root.render(<EndpointList endpoints={[]} range="7d" />));
+    expect(host.querySelector("ul")).toBeNull();
+    expect(host.querySelector('.ds-callout[role="status"]')?.textContent).toBe("No endpoints yetAdd an endpoint to see its last check and uptime here.");
+  });
+
+  it("lists each endpoint when there are some", () => {
+    act(() => root.render(<EndpointList endpoints={ENDPOINTS} range="30d" />));
+    expect(rows()).toHaveLength(2);
+    expect(host.querySelector(".ds-callout")).toBeNull();
   });
 });
