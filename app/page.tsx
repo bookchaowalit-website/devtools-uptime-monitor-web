@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { DashFoot, DashTop, Pill, Segmented, Stat } from "@/components/dashboard-shell";
+import { EndpointList } from "@/components/endpoint-list";
 import { ENDPOINTS, RANGES, boardMetrics, type Range } from "@/lib/uptime";
 
 const RANGE_LABELS: Record<Range, string> = { "24h": "24 hours", "7d": "7 days", "30d": "30 days" };
@@ -37,16 +38,7 @@ export default function Home() {
               <p>Last check and uptime over {period}</p>
             </div>
           </div>
-          <ul className="ds-rows">
-            {ENDPOINTS.map((endpoint) => (
-              <li key={endpoint.name} className="ds-row">
-                <span className="ds-row-name"><span className="ds-dot" data-tone={endpoint.status === "up" ? "green" : "red"} aria-hidden="true" />{endpoint.name}</span>
-                <span className="ds-row-detail">Last check: {endpoint.value} · {endpoint.uptime[range]}% uptime</span>
-                <span className="ds-row-value"><Pill tone={endpoint.status === "up" ? "green" : "red"}>{endpoint.status === "up" ? "Up" : "Down"}</Pill></span>
-                <span className="ds-meter" aria-hidden="true"><span style={{ width: `${endpoint.uptime[range]}%` }} /></span>
-              </li>
-            ))}
-          </ul>
+          <EndpointList endpoints={ENDPOINTS} range={range} />
         </section>
 
         <p className="ds-note">A visual sample only: no remote check runs behind this page and no alert channel is connected.</p>
