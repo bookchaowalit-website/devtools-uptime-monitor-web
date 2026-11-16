@@ -1,20 +1,58 @@
 "use client";
 
 import { useState } from "react";
+import { DashFoot, DashTop, Pill, Segmented, Stat } from "@/components/dashboard-shell";
 import { ENDPOINTS, RANGES, boardMetrics, type Range } from "@/lib/uptime";
+
+const RANGE_LABELS: Record<Range, string> = { "24h": "24 hours", "7d": "7 days", "30d": "30 days" };
+const PERIODS = RANGES.map((id) => ({ id, label: RANGE_LABELS[id] }));
 
 export default function Home() {
   const [range, setRange] = useState<Range>("7d");
   const metrics = boardMetrics(ENDPOINTS, range);
-  return <main className="signal-room">
-    <header className="signal-bar"><div className="signal-mark">B/09</div><div className="signal-name"><strong>SIGNAL WATCH</strong><span>ENDPOINT STATUS / SAMPLE BOARD</span></div><div className="signal-state"><i /> SAMPLE DATA · READ ONLY</div></header>
-    <section className="signal-hero"><div><p className="signal-kicker">BOOKCHAOWALIT / OBSERVATORY LOG</p><h1>Watch the<br /><em>signal.</em></h1><p className="hero-copy">A quiet readout for whether a few important endpoints answer when called.</p></div><div className="beacon" aria-label="Sample beacon"><span className="beacon-beam" /><div className="beacon-tower"><i /><i /><i /></div><small>NOT LIVE<br />DEMO ONLY</small></div></section>
-    <section className="signal-console" aria-label="Uptime monitor sample"><div className="console-top"><div><span className="signal-kicker">WATCH WINDOW</span><h2>How the line looked.</h2></div><div className="range-tabs" role="group" aria-label="Sample range">{RANGES.map((option) => <button key={option} type="button" aria-pressed={range === option} className={range === option ? "active" : ""} onClick={() => setRange(option)}>{option}</button>)}</div></div>
-      <div className="metric-row">{metrics.map(({ label, value, note }) => <div className="metric-cell" key={label}><span>{label}</span><strong>{value}</strong><small>{note} · {range}</small></div>)}</div>
-      <div className="log-heading"><span>ENDPOINT LOG</span><span>{range} / SYNTHETIC CHECKS</span></div>
-      <div className="endpoint-log">{ENDPOINTS.map((row, index) => <div className="endpoint-row" key={row.name}><span className="endpoint-number">{String(index + 1).padStart(2, "0")}</span><div className="endpoint-name"><strong>{row.name}</strong><span>{row.note}</span></div><b className="endpoint-value">{row.value}</b><span className={`endpoint-status ${row.status}`}>{row.status}</span></div>)}</div>
-      <p className="honesty-note"><i /> The monitor is a visual sample only. No remote check is running behind this screen.</p>
-    </section>
-    <footer className="signal-footer"><span>BOOKCHAOWALIT / UPTIME MONITOR</span><span>SAMPLE METRICS · NO ALERT CHANNEL</span></footer>
-  </main>;
+  const period = RANGE_LABELS[range];
+
+  return (
+    <div className="ds">
+      <a className="ds-skip" href="#main">Skip to content</a>
+      <DashTop name="Uptime" tagline="Two sample endpoints" />
+
+      <main id="main" tabIndex={-1} className="ds-main">
+        <div className="ds-head">
+          <div>
+            <h1>Endpoint uptime</h1>
+            <p>Last {period} · share of checks that answered <Pill tone="grey">Sample data</Pill></p>
+          </div>
+          <Segmented label="Period" options={PERIODS} value={range} onChange={setRange} />
+        </div>
+
+        <ul className="ds-stats" aria-label={`Last ${period} at a glance`}>
+          {metrics.map((metric) => <Stat key={metric.label} label={metric.label} value={metric.value} note={metric.note} />)}
+        </ul>
+
+        <section className="ds-panel" aria-labelledby="endpoints-heading">
+          <div className="ds-panel-head">
+            <div>
+              <h2 id="endpoints-heading">Endpoints</h2>
+              <p>Last check and uptime over {period}</p>
+            </div>
+          </div>
+          <ul className="ds-rows">
+            {ENDPOINTS.map((endpoint) => (
+              <li key={endpoint.name} className="ds-row">
+                <span className="ds-row-name"><span className="ds-dot" data-tone={endpoint.status === "up" ? "green" : "red"} aria-hidden="true" />{endpoint.name}</span>
+                <span className="ds-row-detail">Last check: {endpoint.value} · {endpoint.uptime[range]}% uptime</span>
+                <span className="ds-row-value"><Pill tone={endpoint.status === "up" ? "green" : "red"}>{endpoint.status === "up" ? "Up" : "Down"}</Pill></span>
+                <span className="ds-meter" aria-hidden="true"><span style={{ width: `${endpoint.uptime[range]}%` }} /></span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <p className="ds-note">A visual sample only: no remote check runs behind this page and no alert channel is connected.</p>
+      </main>
+
+      <DashFoot source="https://github.com/bookchaowalit-website/devtools-uptime-monitor-web" />
+    </div>
+  );
 }

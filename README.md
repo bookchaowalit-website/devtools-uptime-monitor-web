@@ -1,8 +1,8 @@
-# Signal Watch (uptime monitor)
+# Uptime (dashboard)
 
-A sample uptime board: two authored endpoint rows, a range switch and board numbers derived from the rows. Nothing is monitored.
+A sample uptime board: two authored endpoint rows, a range switch and board numbers derived from the rows. Nothing is monitored. Built on the Dashboard shell (see `DASHBOARD.md`).
 
-Live: https://uptime-monitor.bookchaowalit.com (deployed by Vercel CLI; it can lag `main`, see `PRODUCT.md`).
+Live: https://uptime-monitor.bookchaowalit.com (Vercel Git deploy: a push to `main` deploys).
 
 ## What it does not do
 
@@ -18,7 +18,7 @@ npm run dev
 ## Checks
 
 ```bash
-npm test           # Vitest: board numbers, MCP route, home page render, Sentry scrubbing
+npm test           # Vitest: board numbers, MCP route, mounted home page tests, the Dashboard shell, Sentry scrubbing
 npm run lint
 npm run typecheck
 npm run build
@@ -32,4 +32,5 @@ scan on every push and PR to `main`.
 - `lib/uptime.ts`: the sample endpoint log, ranges and `boardMetrics` (used by the page and the MCP route).
 - `app/api/mcp/route.ts`: stateless JSON-RPC endpoint with `list_endpoints` and `get_summary` over the sample data.
 - `lib/sentry.ts` + `instrumentation*.ts`: error reporting to Sentry, errors only, personal data stripped; off when `NEXT_PUBLIC_SENTRY_DSN` is unset.
+- `app/dashboard-shell.css` + `components/dashboard-shell.tsx`: the copied-in Dashboard shell (`DASHBOARD.md`).
 - `app/more-projects/page.tsx`: shared portfolio link page (copied per repository, not a package).
