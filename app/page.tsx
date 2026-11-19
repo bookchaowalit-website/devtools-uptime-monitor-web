@@ -14,9 +14,10 @@ export default function Home() {
   const period = RANGE_LABELS[range];
   const values = uptimeSeries(ENDPOINTS, range);
   const labels = bucketLabels(range);
-  const { ticks, tickLabels } = chartTicks(range);
+  const { ticks, tickLabels, buckets } = chartTicks(range);
   const bucket = range === "24h" ? "hour" : "day";
   const low = values.length ? values.indexOf(Math.min(...values)) : -1;
+  const high = values.length ? values.indexOf(Math.max(...values)) : -1;
 
   return (
     <div className="ds">
@@ -40,11 +41,12 @@ export default function Home() {
           <ChartPanel
             title={`Uptime per ${bucket}`}
             subtitle={low >= 0 ? `Average of both endpoints · lowest ${values[low]}% (${labels[low].toLowerCase()})` : undefined}
-            summary={`Average uptime per ${bucket} over the last ${period}${low >= 0 ? `, lowest ${values[low]}% ${labels[low].toLowerCase()}` : ""}.`}
+            summary={`Average uptime per ${bucket} over the last ${period}${low >= 0 ? `, lowest ${values[low]}% ${labels[low].toLowerCase()}, highest ${values[high]}% ${labels[high].toLowerCase()}` : ""}.`}
             values={values}
             labels={labels}
             ticks={ticks}
             tickLabels={tickLabels}
+            buckets={buckets}
             max={100}
             unit="Uptime (%)"
             yUnit="%"

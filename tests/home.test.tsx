@@ -68,6 +68,10 @@ describe("uptime page", () => {
     expect(host.querySelector(".ds-chart-panel h2")?.textContent).toBe("Uptime per hour");
     expect(host.querySelectorAll(".ds-table tbody tr")).toHaveLength(24);
     expect(host.querySelector(".ds-chart-panel .ds-panel-head p")?.textContent).toBe("Average of both endpoints · lowest 50% (3 h ago)");
+    // Hour buckets: the "Now" tick is the right edge and the 6 h ticks are evenly spaced (25% apart).
+    expect([...host.querySelectorAll<HTMLElement>(".ds-chart-x span")].map((span) => [span.textContent, span.style.left])).toEqual([["24 h ago", "0%"], ["18 h", "25%"], ["12 h", "50%"], ["6 h", "75%"], ["Now", "100%"]]);
+    // Screen readers get the high point too (the drawn peak label is aria-hidden).
+    expect(host.querySelector(".ds-chart svg")?.getAttribute("aria-label")).toMatch(/lowest 50% 3 h ago, highest \d+(\.\d)?% .+\.$/);
   });
 
   it("says up and down in words next to the colour", () => {

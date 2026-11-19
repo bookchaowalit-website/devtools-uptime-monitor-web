@@ -51,11 +51,14 @@ describe("sample history", () => {
       const series = uptimeSeries(ENDPOINTS, range);
       expect(series).toHaveLength(bucketLabels(range).length);
       expect(`${mean(series).toFixed(1)}%`).toBe(value(boardMetrics(ENDPOINTS, range), "Avg uptime"));
-      const { ticks, tickLabels } = chartTicks(range);
+      const { ticks, tickLabels, buckets } = chartTicks(range);
       expect(ticks).toHaveLength(tickLabels.length);
-      expect(Math.max(...ticks)).toBe(series.length - 1);
+      // Bucket ticks are edges (the last one is "now", after the last bucket); point ticks sit under the last value.
+      expect(Math.max(...ticks)).toBe(buckets ? series.length : series.length - 1);
     }
     expect(uptimeSeries([], "7d")).toEqual([]);
+    // 24 hours: edges every six hours, evenly spaced, from 24 h ago to now.
+    expect(chartTicks("24h")).toEqual({ ticks: [0, 6, 12, 18, 24], tickLabels: ["24 h ago", "18 h", "12 h", "6 h", "Now"], buckets: true });
   });
 
   it("labels buckets oldest first, ending now", () => {

@@ -73,11 +73,15 @@ export function uptimeSeries(endpoints: Endpoint[], range: Range): number[] {
   return Array.from({ length }, (_, i) => Number(mean(endpoints.map((endpoint) => endpoint.history[range][i] ?? 0)).toFixed(1)));
 }
 
-/** Where the chart's x labels sit, with short words under each. */
-export function chartTicks(range: Range): { ticks: number[]; tickLabels: string[] } {
-  if (range === "24h") return { ticks: [0, 6, 12, 18, 23], tickLabels: ["24 h ago", "18 h", "12 h", "6 h", "Now"] };
-  if (range === "7d") return { ticks: [0, 3, 6], tickLabels: ["6 days ago", "3 days ago", "Today"] };
-  return { ticks: [0, 10, 20, 29], tickLabels: ["29 days ago", "19 days", "9 days", "Today"] };
+/**
+ * Where the chart's x labels sit, with short words under each. The 24-hour view is time-of-day: each value is one hour
+ * bucket, so it uses the shell's `buckets` mode and the ticks are bucket edges (0 = 24 h ago, 24 = now), six hours apart.
+ * Day views name whole days, so their ticks sit under the day's point.
+ */
+export function chartTicks(range: Range): { ticks: number[]; tickLabels: string[]; buckets: boolean } {
+  if (range === "24h") return { ticks: [0, 6, 12, 18, 24], tickLabels: ["24 h ago", "18 h", "12 h", "6 h", "Now"], buckets: true };
+  if (range === "7d") return { ticks: [0, 3, 6], tickLabels: ["6 days ago", "3 days ago", "Today"], buckets: false };
+  return { ticks: [0, 10, 20, 29], tickLabels: ["29 days ago", "19 days", "9 days", "Today"], buckets: false };
 }
 
 export type Metric = { label: string; value: string; note: string; tone?: "red" };
