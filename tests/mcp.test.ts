@@ -15,7 +15,7 @@ describe("MCP route", () => {
   it("list_endpoints returns the sample log, marked as sample", async () => {
     const { result } = await (await rpc({ jsonrpc: "2.0", id: 1, method: "tools/call", params: { name: "list_endpoints" } })).json();
     expect(result.sample).toBe(true);
-    expect(result.endpoints.map((e: { name: string }) => e.name)).toEqual(["bookchaowalit.com", "api.example"]);
+    expect(result.endpoints.map((e: { name: string }) => e.name)).toEqual(["bookchaowalit.com", "Sample API (api.example.com)"]);
   });
 
   it("get_summary derives numbers for a range and rejects an unknown range", async () => {

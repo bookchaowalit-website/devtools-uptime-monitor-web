@@ -30,8 +30,11 @@ describe("uptime page", () => {
   it("opens on 7 days with board numbers that match the two logged endpoints", () => {
     expect(host.querySelector("h1")?.textContent).toBe("Endpoint uptime");
     expect(button("7 days").getAttribute("aria-pressed")).toBe("true");
-    expect(stats()).toEqual(["Targets2sample scope", "Up1responding", "Down1needs a look", "Avg uptime99.0%sample window"]);
-    expect(rows()).toEqual(["bookchaowalit.comLast check: 200 · 120ms · 99.9% uptimeUp", "api.exampleLast check: timeout · 98.1% uptimeDown"]);
+    expect(stats()).toEqual(["Targets2sample scope", "Up1responding", "Down1not answering: needs a look", "Avg uptime99.0%sample window"]);
+    expect(rows()).toEqual([
+      "bookchaowalit.comLast check 1 min ago: 200 · 120ms · 99.9% uptimeUp",
+      "Sample API (api.example.com)Last check 2 min ago: timeout · 98.1% uptimeDown",
+    ]);
     expect(host.querySelector(".ds-pill")?.textContent).toBe("Sample data");
     expect(host.textContent).toContain("no remote check runs behind this page");
   });
@@ -44,6 +47,27 @@ describe("uptime page", () => {
     expect(host.querySelectorAll<HTMLElement>(".ds-meter span")[1].style.width).toBe("87.5%");
     press(button("30 days"));
     expect(stats()[3]).toBe("Avg uptime99.3%sample window");
+  });
+
+  it("marks the Down tile and the Down row in red, with words beside the colour", () => {
+    const downTile = [...host.querySelectorAll(".ds-stat")].find((tile) => tile.textContent?.startsWith("Down"));
+    expect(downTile?.querySelector('.ds-dot[data-tone="red"]')).not.toBeNull();
+    expect([...host.querySelectorAll(".ds-row .ds-meter")].map((meter) => meter.getAttribute("data-tone"))).toEqual(["green", "red"]);
+  });
+
+  it("charts the average uptime per day beside the endpoints, with a table of every value", () => {
+    const grid = host.querySelector(".ds-grid");
+    expect(grid?.children[0].classList.contains("ds-chart-panel")).toBe(true);
+    expect(grid?.children[1].querySelector("#endpoints-heading")).not.toBeNull();
+    expect(host.querySelector(".ds-chart-panel h2")?.textContent).toBe("Uptime per day");
+    expect(host.querySelector(".ds-chart-panel .ds-panel-head p")?.textContent).toBe("Average of both endpoints · lowest 93.8% (today)");
+    const cells = [...host.querySelectorAll(".ds-table tbody tr")].map((row) => row.textContent);
+    expect(cells).toHaveLength(7);
+    expect(cells[6]).toBe("Today93.8");
+    press(button("24 hours"));
+    expect(host.querySelector(".ds-chart-panel h2")?.textContent).toBe("Uptime per hour");
+    expect(host.querySelectorAll(".ds-table tbody tr")).toHaveLength(24);
+    expect(host.querySelector(".ds-chart-panel .ds-panel-head p")?.textContent).toBe("Average of both endpoints · lowest 50% (3 h ago)");
   });
 
   it("says up and down in words next to the colour", () => {
